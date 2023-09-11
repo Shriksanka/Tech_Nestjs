@@ -26,14 +26,19 @@ export class AuthService {
         return [access_token, refresh_token];
     }
 
-    async registration(userDto: CreateUserDto) {
+    async registration(userDto: CreateUserDto, avatar?: Express.Multer.File) {
         const candidate = await this.userService.getUserByEmail(userDto.email);
         if (candidate) {
             throw new HttpException('Пользователь с таким email существует', HttpStatus.BAD_REQUEST);
         }
         const hashPassword = await bcrypt.hash(userDto.password, 5);
-        const user = await this.userService.createUser({...userDto, password: hashPassword, avatar: userDto.avatar});
-        
+        const user = await this.userService.createUser({...userDto, password: hashPassword});
+      
+        if (avatar) {
+          user.avatar = `uploads/${avatar.filename}`;
+          await user.save({fields: ['avatar']});
+        }
+
         const access_token = await this.generateAccessToken(user);
         const refresh_token = await this.generateRefreshToken(user);
 

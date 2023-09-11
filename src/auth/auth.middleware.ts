@@ -1,13 +1,15 @@
 import { Injectable, NestMiddleware, UnauthorizedException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { NextFunction, Request, Response } from "express";
+import { UsersService } from "../users/users.service";
 
 
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
-    constructor(private jwtService: JwtService) {}
+    constructor(private jwtService: JwtService,
+                private userService: UsersService) {}
     
-    use(req: Request, res: Response, next: NextFunction) {
+    async use(req: Request, res: Response, next: NextFunction) {
         const authHeader = req.headers.authorization;
         
         if (authHeader) {
@@ -17,6 +19,9 @@ export class AuthMiddleware implements NestMiddleware {
                 try {
                     const user = this.jwtService.verify(token);
                     req.user = user;
+
+                    user.refreshToken = await this.userService.getRefreshTokenByEmail(user.email);
+
                     res.locals.user = user;
                     return next();
                 } catch (e) {

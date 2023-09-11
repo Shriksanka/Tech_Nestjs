@@ -3,7 +3,6 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { UsersModule } from '../users/users.module';
 import {JwtModule} from "@nestjs/jwt";
-import { MulterMiddleware } from 'src/multer.middleware';
 
 @Module({
   controllers: [AuthController],
@@ -22,8 +21,5 @@ import { MulterMiddleware } from 'src/multer.middleware';
     JwtModule
   ]
 })
-export class AuthModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(MulterMiddleware).forRoutes('auth/register');
-  }
-}
+
+export class AuthModule {}

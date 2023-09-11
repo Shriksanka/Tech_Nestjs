@@ -1,16 +1,17 @@
 import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { Request, Response } from 'express';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class SecurityInterceptor implements NestInterceptor {
-  constructor() {}
+  constructor(private userService: UsersService) {}
 
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+  async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
     const request: Request = context.switchToHttp().getRequest();
     const response: Response = context.switchToHttp().getResponse();
 
-    const refreshToken = this.getRefreshFromRequest(request);
+    const refreshToken = await this.getRefreshFromRequest(request);
 
     console.log('SecurityInterceptor is running');
     console.log('Refresh token:', refreshToken);
@@ -31,7 +32,7 @@ export class SecurityInterceptor implements NestInterceptor {
     return next.handle();
   }
 
-  private getRefreshFromRequest(request: Request): string | undefined {
+  private async getRefreshFromRequest(request: Request): Promise<string | undefined> {
     const user = (request as any).res?.locals?.user;
 
     if (user && user.refreshToken) {

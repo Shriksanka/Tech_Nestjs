@@ -37,14 +37,15 @@ export class AuthController {
     @ApiResponse({status: 200})
     @Post('/refresh-token')
     async refreshAccessToken(@Body() refreshDto: RefreshTokenDto) {
-        try {
-            const userId = refreshDto.userId;
-            const refreshToken = refreshDto.refreshToken;
-            const accessToken = await this.authService.refreshAccessToken(refreshToken, userId);
-            return accessToken;
-        } catch (e) {
-            throw new UnauthorizedException('Ошибка при обновлении access token');
-        }
+        return this.authService.refreshAccessToken(refreshDto.refreshToken, refreshDto.userId);
+        // try {
+        //     const userId = refreshDto.userId;
+        //     const refreshToken = refreshDto.refreshToken;
+        //     const accessToken = await this.authService.refreshAccessToken(refreshToken, userId);
+        //     return accessToken;
+        // } catch (e) {
+        //     throw new UnauthorizedException('Ошибка при обновлении access token');
+        // }
     }
 
 

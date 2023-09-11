@@ -10,6 +10,6 @@ export class AuthUserDto {
     
     @ApiProperty({example: '12345', description: 'Пароль'})
     @IsString({message: 'Должно быть строкой. Пример: 12345'})
-    @Length(4, 6, {message: 'Не меньше 4 и не больше 16'})
+    @Length(4, 16, {message: 'Не меньше 4 и не больше 16'})
     readonly password: string;
 }

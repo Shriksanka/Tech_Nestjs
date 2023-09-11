@@ -35,4 +35,14 @@ export class UsersService {
         }
         return false;
     }
+
+    async getRefreshTokenByEmail(email:string): Promise<string | undefined> {
+        const user = await this.userRepository.findOne({where: {email}});
+
+        if (user && user.refreshToken) {
+            return user.refreshToken;
+        }
+        
+        return undefined;
+    }
 }
